@@ -27,6 +27,8 @@ namespace DataBase.Repository
         public Node FindByTitle(string title)
         {
             var node = _context.Nodes.FirstOrDefault(node => node.Title == title);
+            if (node == default)
+                return null;
             return node?.ToDomain();
         }
 
