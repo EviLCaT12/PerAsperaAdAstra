@@ -11,11 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationContext>(options =>
-    options.UseNpgsql($"Host=localhost;Port=5432;Database=diary;Username=postgres;Password=postgres"));
+    options.UseNpgsql($"Host=localhost;Port=5432;Database=diary;Username=postgres;Password=qwerty123"));
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.EnableSensitiveDataLogging(true));
 builder.Services.AddTransient<INodeRepository, NodeRepository>();
-builder.Services.AddTransient<NodeRepository>();
+builder.Services.AddTransient<NodeService>();
 
 builder.Services.AddControllers();
 

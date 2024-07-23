@@ -34,7 +34,7 @@ namespace PerAsperaAdAstra
         {
             var node = _service.GetNodeByTitle(old_title);
             Node new_node = new(node.Id, new_title, content, createdDate);
-            return Ok(_service.UpdateNode(node));
+            return Ok(_service.UpdateNode(new_node));
         }
 
         [HttpDelete("delete")]
