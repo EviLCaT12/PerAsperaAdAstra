@@ -1,7 +1,7 @@
 using Domain.Logic.Intefaces;
 using Domain.Models;
 
-namespace Domain.Services
+namespace Domain.UseCases
 {
     public class NodeService
     {
