@@ -5,13 +5,20 @@ using Domain.UseCases;
 using PerAsperaAdAstra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 
-var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
+var confBuilder = new ConfigurationBuilder();
+confBuilder.SetBasePath(Directory.GetCurrentDirectory());
+confBuilder.AddJsonFile("appsettings.json");
+var config = confBuilder.Build();
+var connectionString = config.GetConnectionString("DefaultConnection");
+
+var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationContext>(options =>
-    options.UseNpgsql($"Host=localhost;Port=5432;Database=diary;Username=postgres;Password=qwerty123"));
+    options.UseNpgsql(connectionString));
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.EnableSensitiveDataLogging(true));
 builder.Services.AddDbContext<ApplicationContext>(ServiceLifetime.Scoped);
@@ -29,6 +36,8 @@ builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
 
+
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -42,8 +51,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
+
 
 app.MapControllers();
 

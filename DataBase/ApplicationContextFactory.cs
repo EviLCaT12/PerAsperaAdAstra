@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace DataBase
 {
@@ -7,8 +8,13 @@ namespace DataBase
     {
         public ApplicationContext CreateDbContext(string[] args)
         {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .Build();
+
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
-            optionsBuilder.UseNpgsql($"Host=localhost;Port=5432;Database=diary;Username=postgres;Password=qwerty123");
+            optionsBuilder.UseNpgsql(config.GetConnectionString("DefaultConnection"));
             return new ApplicationContext(optionsBuilder.Options);
         }
     }
