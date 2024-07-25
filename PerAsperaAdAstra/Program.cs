@@ -14,8 +14,10 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql($"Host=localhost;Port=5432;Database=diary;Username=postgres;Password=qwerty123"));
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.EnableSensitiveDataLogging(true));
-builder.Services.AddTransient<INodeRepository, NodeRepository>();
-builder.Services.AddTransient<NodeService>();
+builder.Services.AddDbContext<ApplicationContext>(ServiceLifetime.Scoped);
+builder.Services.AddScoped<INodeRepository, NodeRepository>();
+builder.Services.AddScoped<NodeService>();
+
 
 builder.Services.AddControllers();
 
