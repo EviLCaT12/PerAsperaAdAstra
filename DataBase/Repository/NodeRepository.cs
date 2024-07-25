@@ -1,6 +1,7 @@
 using Domain.Logic.Intefaces;
 using Domain.Models;
 using DataBase.Converters;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataBase.Repository
 {
@@ -21,12 +22,12 @@ namespace DataBase.Repository
 
         public IEnumerable<Node> GetAll()
         {
-            return _context.Nodes.Select(node => node.ToDomain());
+            return _context.Nodes.AsNoTracking().Select(node => node.ToDomain());
         }
 
         public Node FindByTitle(string title)
         {
-            var node = _context.Nodes.FirstOrDefault(node => node.Title == title);
+            var node = _context.Nodes.AsNoTracking().FirstOrDefault(node => node.Title == title);
             if (node == default)
                 return null;
             return node?.ToDomain();
@@ -34,7 +35,7 @@ namespace DataBase.Repository
 
         public bool Delete(int id)
         {
-            var node = _context.Nodes.FirstOrDefault(n => n.Id == id);
+            var node = _context.Nodes.AsNoTracking().FirstOrDefault(n => n.Id == id);
             if (node == default)
                 return false;
 
