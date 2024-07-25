@@ -1,0 +1,6 @@
+@PerAsperaAdAstra_HostAddress = http://localhost:5265
+
+GET {{PerAsperaAdAstra_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
