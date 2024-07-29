@@ -15,9 +15,9 @@ namespace PerAsperaAdAstra
         }
 
         [HttpPost("create")]
-        public IActionResult CreateNode(string title, string content, DateTime createdDate)
+        public IActionResult CreateNode(string title, string content)
         {
-            Node node = new(0, title, content, createdDate);
+            Node node = new(0, title, content, DateTime.UtcNow);
 
             return Ok(_service.AddNode(node));
 

@@ -3,15 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataBase
 {
-    public class ApplicationContext : DbContext
+    public class ApplicationContext(DbContextOptions<ApplicationContext> options) 
+        : DbContext(options)
     {
         public DbSet<NodeModel> Nodes { get; set; }
-        public ApplicationContext (DbContextOptions options) : base (options) { }
         protected override void OnModelCreating (ModelBuilder modelBuilder)
         {
-            base.OnModelCreating (modelBuilder);
-
-            modelBuilder.Entity<NodeModel>().HasIndex(model => model.Title);
+            base.OnModelCreating(modelBuilder);
         }
     } 
 }
