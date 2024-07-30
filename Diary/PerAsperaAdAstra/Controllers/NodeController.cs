@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PerAsperaAdAstra
 {
-    [ApiController]
-    [Route("node")]
     public class NodeController : ControllerBase
     {
         private readonly NodeService _service;

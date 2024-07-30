@@ -1,4 +1,5 @@
 using DataBase;
+using Hermes.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -19,6 +20,7 @@ builder.Services.AddDbContext<ApplicationContext>((serviceProvider, options) =>
 });
 
 
+builder.Services.AddHostedService<OutboxService>();
 
 
 builder.Services.AddControllers();
