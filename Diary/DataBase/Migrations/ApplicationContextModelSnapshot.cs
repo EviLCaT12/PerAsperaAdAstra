@@ -42,8 +42,6 @@ namespace DataBase.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Title");
-
                     b.ToTable("Nodes");
                 });
 #pragma warning restore 612, 618

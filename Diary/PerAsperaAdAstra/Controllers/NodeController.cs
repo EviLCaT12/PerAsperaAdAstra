@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PerAsperaAdAstra
 {
-    [ApiController]
-    [Route("node")]
     public class NodeController : ControllerBase
     {
         private readonly NodeService _service;
@@ -15,9 +13,9 @@ namespace PerAsperaAdAstra
         }
 
         [HttpPost("create")]
-        public IActionResult CreateNode(string title, string content, DateTime createdDate)
+        public IActionResult CreateNode(string title, string content)
         {
-            Node node = new(0, title, content, createdDate);
+            Node node = Node.CreateNode(title, content);
 
             return Ok(_service.AddNode(node));
 
@@ -30,11 +28,12 @@ namespace PerAsperaAdAstra
         }
 
         [HttpPut("update")]
-        public IActionResult UpdateNode(string old_title, string new_title, string content, DateTime createdDate)
+        public IActionResult UpdateNode(string old_title, string new_title, string content)
         {
             var node = _service.GetNodeByTitle(old_title);
-            Node new_node = new(node.Id, new_title, content, createdDate);
-            return Ok(_service.UpdateNode(new_node));
+            node.Title = new_title;
+            node.Content = content;
+            return Ok(_service.UpdateNode(node));
         }
 
         [HttpDelete("delete")]

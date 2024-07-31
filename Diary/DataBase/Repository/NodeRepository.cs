@@ -46,6 +46,7 @@ namespace DataBase.Repository
         public bool Update(Node node)
         {
             _context.Nodes.Update(node.ToModel());
+            Save();
             return true;
         }
 
