@@ -43,13 +43,13 @@ public class OutboxService : BackgroundService
 
             foreach (var outbox in newOutboxes)
             {
+                if (stoppingToken.IsCancellationRequested)
+                    return;
                 try
                 {
-                
                     ProcessOutbox(outbox);
-
                     outbox.Status = 1;
-                    context.Outboxes.Update(outbox);
+                    context.Outboxes.Delete(outbox);
                     await context.SaveChangesAsync(stoppingToken);
                 }
                 catch (Exception ex)

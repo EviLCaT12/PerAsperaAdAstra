@@ -30,17 +30,19 @@ namespace Domain.UseCases
         public Node GetNodeByTitle(string title)
         {
             var node = _db.FindByTitle(title);
-            return node ?? null;
+            if (node is null)
+            {
+                Console.WriteLine("Вернуло null");
+                return null;
+            }
+            else 
+                return node;
         }
 
         public bool UpdateNode(Node node)
         {
-            if (!_db.Update(node))
-            {
-                _db.Save();
-                return true;
-            }
-            return false;
+            _db.Update(node);
+            return true;
         }
 
         public bool DeleteNode(int id)

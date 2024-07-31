@@ -1,3 +1,4 @@
+
 namespace Domain.Models;
 
 public class Node
@@ -14,5 +15,18 @@ public class Node
         Content = content;
         CreatedDate = createdDate;
     }
+
+    public Node(string title, string content)
+    {
+        Title = title;
+        Content = content;
+        CreatedDate = DateTime.UtcNow;
+    }
+
     public Node() {}
+
+    public static Node CreateNode(string title, string content)
+    {
+        return new Node(title, content);
+    }
 }
