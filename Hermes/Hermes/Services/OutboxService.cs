@@ -8,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using DataBase;
 using DataBase.Dbo;
+using Kafka;
+using Confluent.Kafka;
 
 namespace Hermes.Services;
 
@@ -15,11 +17,13 @@ public class OutboxService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<OutboxService> _logger;
+    private readonly Producer<Null, string> _producer;
 
-    public OutboxService(IServiceProvider serviceProvider, ILogger<OutboxService> logger)
+    public OutboxService(IServiceProvider serviceProvider, ILogger<OutboxService> logger, Producer<Null, string> producer)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
+        _producer = producer;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -49,7 +53,7 @@ public class OutboxService : BackgroundService
                 {
                     ProcessOutbox(outbox);
                     outbox.Status = 1;
-                    context.Outboxes.Delete(outbox);
+                    context.Outboxes.Update(outbox);
                     await context.SaveChangesAsync(stoppingToken);
                 }
                 catch (Exception ex)
@@ -60,9 +64,8 @@ public class OutboxService : BackgroundService
         }
     }
 
-    private void ProcessOutbox(OutboxDbo outbox)
+    private async void ProcessOutbox(OutboxDbo outbox)
     {
-        
-        Console.WriteLine($"Processing outbox record: {outbox.Payload}");
+        await _producer.ProduceAsync("my_topic", outbox.Payload);
     }
 }
