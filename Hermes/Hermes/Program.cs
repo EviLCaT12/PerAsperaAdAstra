@@ -29,11 +29,12 @@ builder.Services.AddSingleton(sp =>
 {
     var config = new ConsumerConfig
     {
-        GroupId = "test-consumer-group",
+        GroupId = "test",
         BootstrapServers = "localhost:9092",
         AutoOffsetReset = AutoOffsetReset.Earliest
     };
-    return new Consumer<Ignore, string>(config);
+    var serviceScopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
+    return new Consumer<Ignore, string>(config, serviceScopeFactory);
 });
 
 builder.Services.AddHostedService<KafkaConsumerHostedService<Ignore, string>>();

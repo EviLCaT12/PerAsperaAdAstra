@@ -13,23 +13,43 @@ namespace DataBase.Migrations
             // создание функции-обработчика
             migrationBuilder.Sql(@"
             CREATE OR REPLACE FUNCTION trg_func_nodes() RETURNS TRIGGER AS $$
-            BEGIN
-                IF TG_OP = 'INSERT' THEN
-                    INSERT INTO ""Outboxes"" (""Payload"", ""CreatedDate"", ""Status"")
-                    VALUES ('INSERTED: ' || row_to_json(NEW)::TEXT, NOW(), 0);
-                    RETURN NEW;
-                ELSIF TG_OP = 'UPDATE' THEN
-                    INSERT INTO ""Outboxes"" (""Payload"", ""CreatedDate"", ""Status"")
-                    VALUES ('UPDATED: ' || row_to_json(NEW)::TEXT, NOW(), 0);
-                    RETURN NEW;
-                ELSIF TG_OP = 'DELETE' THEN
-                    INSERT INTO ""Outboxes"" (""Payload"", ""CreatedDate"", ""Status"")
-                    VALUES ('DELETED: ' || row_to_json(OLD)::TEXT, NOW(), 0);
-                    RETURN OLD;
-                END IF;
-                RETURN NULL;
-            END;
-            $$ LANGUAGE plpgsql;
+DECLARE
+    insert_query TEXT;
+    update_query TEXT;
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        SELECT
+            'INSERT INTO ""Nodes"" (' || string_agg(quote_ident(key), ', ') || ') VALUES (' || string_agg(quote_literal(value), ', ') || ');'
+        INTO insert_query
+        FROM json_each_text(row_to_json(NEW));
+
+        INSERT INTO ""Outboxes"" (""Payload"", ""CreatedDate"", ""Status"")
+        VALUES (insert_query, NOW(), 0);
+        
+        RETURN NEW;
+    ELSIF TG_OP = 'UPDATE' THEN
+        SELECT
+            'UPDATE ""Nodes"" SET ' || string_agg(quote_ident(key) || ' = ' || quote_literal(value), ', ') || ' WHERE id = ' || quote_literal(NEW.id) || ';'
+        INTO update_query
+        FROM json_each_text(row_to_json(NEW));
+        
+        INSERT INTO ""Outboxes"" (""Payload"", ""CreatedDate"", ""Status"")
+        VALUES (update_query, NOW(), 0);
+        
+        RETURN NEW;
+    ELSIF TG_OP = 'DELETE' THEN
+        INSERT INTO ""Outboxes"" (""Payload"", ""CreatedDate"", ""Status"")
+        VALUES (
+            'DELETE FROM ""Nodes"" WHERE id = ' || quote_literal(OLD.id) || ';',
+            NOW(),
+            0
+        );
+        RETURN OLD;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
         ");
 
             // Создание триггера на таблице nodes
